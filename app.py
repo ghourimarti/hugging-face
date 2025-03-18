@@ -15,6 +15,6 @@ with gr.Blocks() as demo:
     gr.Interface(fn=predict, inputs=textbox, outputs="text")
 
 demo.launch()
-# # create an interface for the model
-# with gr.Interface(predict, "textbox", "text") as interface:
-#     interface.launch()
+# create an interface for the model
+with gr.Interface(predict, "textbox", "text") as interface:
+    interface.launch()
