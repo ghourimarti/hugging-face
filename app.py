@@ -18,3 +18,4 @@ with gr.Blocks() as demo:
 # # create an interface for the model
 # with gr.Interface(predict, "textbox", "text") as interface:
 #     interface.launch()
+#
