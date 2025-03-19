@@ -1,0 +1,91 @@
+# name: Sync to Hugging Face hub
+# on:
+#   push:
+#     branches: [main]
+
+#   # to run this workflow manually from the Actions tab
+#   workflow_dispatch:
+
+# jobs:
+#   sync-to-hub:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 0
+#       - name: Add remote 
+#         env:
+#           HF: ${{ secrets.HG }}
+#         run: git remote add space https://ghourimartin:$HF@huggingface.co/spaces/ghourimartin/MLOPS
+#       - name: Push to hub
+#         env:
+#           HF: ${{ secrets.HG }}
+#         run: git push --force https://ghourimartin:$HF@huggingface.co/spaces/ghourimartin/MLOPS main
+
+
+
+
+
+name: Sync to Hugging Face hub  # Defines the name of the GitHub Actions workflow. 
+                                # This is how the workflow will appear in the GitHub Actions tab.
+
+on:
+  push:
+    branches: [main]  # Specifies that this workflow should be triggered automatically when 
+                      # code is pushed to the "main" branch of the repository.
+
+  workflow_dispatch:  # This allows the workflow to be manually triggered from the GitHub Actions tab.
+                      # Useful if you want to sync the repository without making a new commit.
+
+jobs:
+  sync-to-hub:  # Defines the job that will be executed within this workflow.
+                # The job is named "sync-to-hub", but you can change it if needed.
+
+    runs-on: ubuntu-latest  # Specifies that this job should run on the latest available Ubuntu runner.
+                            # The runner is a virtual machine provided by GitHub that executes the workflow steps.
+
+    steps:  # Defines the sequence of commands that will be executed as part of the job.
+
+      # Step 1: Check out the repository
+      - uses: actions/checkout@v2  # Uses the "checkout" action from GitHub Actions.
+                                   # This downloads the repository code onto the runner so it can be accessed.
+
+        with:
+          fetch-depth: 0  # Ensures that the **entire** commit history is fetched instead of just the latest commit.
+                         # This is important when working with syncing repositories.
+
+      # Step 2: Add Hugging Face repository as a remote
+      - name: Add remote  # A descriptive name for this step, used in the GitHub Actions logs.
+
+        env:  # Defines environment variables that will be used in the following command.
+          HF: ${{ secrets.HG }}  # Retrieves the Hugging Face API token stored securely in GitHub Secrets.
+                                 # GitHub Secrets are used to protect sensitive credentials from being exposed.
+
+        run: |  # The `run` field contains the shell command that will be executed.
+          git remote add space https://ghourimartin:$HF@huggingface.co/spaces/ghourimartin/MLOPS  
+          # Adds a new remote repository named "space" that points to the Hugging Face repository.
+          # This allows Git to push updates from the GitHub repository to the Hugging Face repository.
+          #
+          # Breakdown of the URL:
+          #   - "ghourimartin" -> Hugging Face username.
+          #   - "$HF" -> Hugging Face API token retrieved from GitHub Secrets.
+          #   - "huggingface.co/spaces/ghourimartin/MLOPS" -> The Hugging Face Spaces repository URL.
+
+      # Step 3: Push the code to Hugging Face Hub
+      - name: Push to hub  # Another descriptive step name.
+
+        env:
+          HF: ${{ secrets.HG }}  # Retrieves the Hugging Face API token again to use in this step.
+
+        run: |  # The shell command to be executed.
+          git push --force https://ghourimartin:$HF@huggingface.co/spaces/ghourimartin/MLOPS main  
+          # Pushes the latest version of the "main" branch to the Hugging Face repository.
+          #
+          # Breakdown of the command:
+          #   - "git push" -> Pushes the code from the local repository to the remote repository.
+          #   - "--force" -> Forces the push, overwriting any changes in the remote Hugging Face repository.
+          #                 This ensures that the Hugging Face repository always mirrors the GitHub repository.
+          #   - "main" -> Specifies that the "main" branch should be pushed.
+          #
+          # This step ensures that any updates in the GitHub repository are **immediately reflected** in 
+          # the Hugging Face Space.
